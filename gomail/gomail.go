@@ -72,6 +72,20 @@ func SendMorningMail() {
 	mailer.SetAddressHeader("Cc", "nyxargentum16@gmail.com", "Pemberitahuan Penting dari IF-20")
 	mailer.SetHeader("Subject", "Pesan Selamat Pagi dari Wibu IF ")
 	mailer.SetBody("text/html", result)
+}
+
+func SendPromoMail(email string, name string) {
+	templateData := BodylinkEmail{
+		Name: name,
+	}
+
+	result, _ := ParseTemplate("gomail/email_template_promo.html", templateData)
+	mailer := gomail.NewMessage()
+	mailer.SetHeader("From", CONFIG_SENDER_NAME)
+	mailer.SetHeader("To", email, email)
+	mailer.SetAddressHeader("Cc", email, "Pemberitahuan Promo")
+	mailer.SetHeader("Subject", "PROMO TERBATAS")
+	mailer.SetBody("text/html", result)
 
 	dialer := gomail.NewDialer(
 		CONFIG_SMTP_HOST,
