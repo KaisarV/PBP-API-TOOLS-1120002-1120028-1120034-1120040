@@ -8,11 +8,19 @@ import (
 	gomail "GolangTools/gomail"
 
 	"github.com/claudiu/gocron"
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
 
 func main() {
+	// GoRedis
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
 	router := mux.NewRouter()
 	router.HandleFunc("/login", controller.CheckUserLogin).Methods("GET")
 	router.HandleFunc("/logout", controller.Logout).Methods("GET")
@@ -33,8 +41,14 @@ func main() {
 	router.HandleFunc("/transactions/{id}", controller.UpdateTransaction).Methods("PUT")
 	router.HandleFunc("/transactions/{id}", controller.DeleteTransaction).Methods("DELETE")
 
+	SetRedis(rdb, "epgi", "Selamat Pagi Dunia!!", 0) // set key and its value
+	epgi := GetRedis(rdb, "epgi")                    // get value with specific key
+
 	gocron.Start()
-	gocron.Every(1).Day().At("08:00").Do(gomail.SendMorningMail)
+	gocron.Every(1).Day().At("08:00").Do(gomail.SendMorningMail, epgi)
+
+	//flush keys
+	//rdb.FlushDB(ctx)
 
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
