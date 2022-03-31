@@ -1,3 +1,5 @@
+github.com/claudiu/gocron v0.0.0-20151103142354-980c96bf412b h1:1Re4dSAmgqquNAWHiG3dZcJEiehsvhiXfbgwCu2WHZ4=
+github.com/claudiu/gocron v0.0.0-20151103142354-980c96bf412b/go.mod h1:iMXk3fsDNgitdyYEuzKo8zX/wnF2Saooh1kmhoibdA4=
 github.com/go-sql-driver/mysql v1.6.0 h1:BCTh4TKNUYmOmMUcQ3IipzF5prigylS7XXjEkfCHuOE=
 github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/golang-jwt/jwt/v4 v4.2.0 h1:besgBTC8w8HjP6NzQdxwKH9Z5oQMZ24ThTrHp3cZ8eU=

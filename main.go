@@ -5,6 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	gomail "GolangTools/gomail"
+
+	"github.com/claudiu/gocron"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -30,6 +33,9 @@ func main() {
 	router.HandleFunc("/transactions/{id}", controller.UpdateTransaction).Methods("PUT")
 	router.HandleFunc("/transactions/{id}", controller.DeleteTransaction).Methods("DELETE")
 
+	gocron.Start()
+	gocron.Every(1).Day().At("08:00").Do(gomail.SendMorningMail)
+
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
@@ -40,4 +46,5 @@ func main() {
 
 	err := http.ListenAndServe(":8080", handler)
 	log.Fatal(err)
+
 }
