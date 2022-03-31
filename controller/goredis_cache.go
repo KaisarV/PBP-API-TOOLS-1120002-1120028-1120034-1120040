@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import (
 	"context"
@@ -28,3 +28,13 @@ func GetRedis(rdb *redis.Client, key string) string {
 	}
 	return val
 }
+
+// func RDB()  {
+// 	// GoRedis
+// 	rdb := redis.NewClient(&redis.Options{
+// 		Addr:     "localhost:6379",
+// 		Password: "", // no password set
+// 		DB:       0,  // use default DB
+// 	})
+// 	return rdb
+// }

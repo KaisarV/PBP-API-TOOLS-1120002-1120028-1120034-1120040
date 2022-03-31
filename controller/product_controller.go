@@ -63,43 +63,40 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	err := r.ParseForm()
-	var response model.ErrorResponse
-
 	if err != nil {
-		response.Status = 400
-		response.Message = "Error Parsing Data"
-		w.WriteHeader(400)
-		log.Println(err.Error())
-		return
-	}
-
-	vars := mux.Vars(r)
-	productId := vars["id"]
-	query, errQuery := db.Exec(`DELETE FROM transactions WHERE ProductId = ?;`, productId)
-	query, errQuery = db.Exec(`DELETE FROM products WHERE id = ?;`, productId)
-	RowsAffected, err := query.RowsAffected()
-
-	if RowsAffected == 0 {
-		response.Status = 400
-		response.Message = "Product not found"
-		w.WriteHeader(400)
+		log.Println(err)
 		w.Header().Set("Content-Type", "application/json")
+		var response model.ErrorResponse
+		response.Status = 500
+		response.Message = "Internal Server Error"
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
-	if errQuery == nil {
-		response.Status = 200
-		response.Message = "Success Delete Data"
-		w.WriteHeader(200)
-	} else {
-		response.Status = 400
-		response.Message = "Error Delete Data"
-		w.WriteHeader(400)
-		log.Println(errQuery.Error())
-	}
+	vars := mux.Vars(r)
+	productID := vars["products_id"]
 
-	w.Header().Set("Content-Type", "application/json")
+	_, errQueryT := db.Exec("DELETE FROM transactions WHERE ProductID=?",
+		productID,
+	)
+	_, errQueryP := db.Exec("DELETE FROM products WHERE ID=?",
+		productID,
+	)
+
+	var response model.ProductResponse
+	if errQueryT == nil || errQueryP == nil {
+		w.Header().Set("Content-Type", "application/json")
+		var response model.ErrorResponse
+		response.Status = 200
+		response.Message = "Success"
+		GetAllProducts(w, r)
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		var response model.ErrorResponse
+		response.Status = 400
+		response.Message = "Bad Request"
+		json.NewEncoder(w).Encode(response)
+	}
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -126,7 +123,7 @@ func InsertProduct(w http.ResponseWriter, r *http.Request) {
 
 	res, errQuery := db.Exec("INSERT INTO products (name, price) VALUES (?,?)", product.Name, product.Price)
 
-	id, err := res.LastInsertId()
+	id, _ := res.LastInsertId()
 
 	if errQuery == nil {
 		response.Status = 200

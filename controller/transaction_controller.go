@@ -76,7 +76,7 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	transactionId := vars["id"]
 	query, errQuery := db.Exec(`DELETE FROM transactions WHERE id = ?;`, transactionId)
-	RowsAffected, err := query.RowsAffected()
+	RowsAffected, _ := query.RowsAffected()
 
 	if RowsAffected == 0 {
 		response.Status = 400
@@ -122,7 +122,7 @@ func InsertTransaction(w http.ResponseWriter, r *http.Request) {
 	transaction.ProductId, _ = strconv.Atoi(r.Form.Get("productid"))
 	transaction.Quantity, _ = strconv.Atoi(r.Form.Get("qty"))
 
-	rows, errQuery := db.Query("SELECT * FROM products WHERE id=?", transaction.ProductId)
+	rows, _ := db.Query("SELECT * FROM products WHERE id=?", transaction.ProductId)
 
 	if err != nil {
 		response.Status = 400
@@ -152,7 +152,7 @@ func InsertTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 	res, errQuery := db.Exec("INSERT INTO transactions (userid, productid, quantity) VALUES (?,?,?)", transaction.UserID, transaction.ProductId, transaction.Quantity)
 
-	id, err := res.LastInsertId()
+	id, _ := res.LastInsertId()
 
 	if errQuery == nil {
 		response.Status = 200
