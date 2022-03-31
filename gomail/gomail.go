@@ -59,3 +59,30 @@ func ParseTemplate(templateFileName string, data interface{}) (string, error) {
 
 	return buf.String(), nil
 }
+
+func SendPromoMail(email string, name string) {
+	templateData := BodylinkEmail{
+		Name: name,
+	}
+
+	result, _ := ParseTemplate("gomail/email_template_promo.html", templateData)
+	mailer := gomail.NewMessage()
+	mailer.SetHeader("From", CONFIG_SENDER_NAME)
+	mailer.SetHeader("To", email, email)
+	mailer.SetAddressHeader("Cc", email, "Pemberitahuan Promo")
+	mailer.SetHeader("Subject", "PROMO TERBATAS")
+	mailer.SetBody("text/html", result)
+
+	dialer := gomail.NewDialer(
+		CONFIG_SMTP_HOST,
+		CONFIG_SMTP_PORT,
+		CONFIG_AUTH_EMAIL,
+		CONFIG_AUTH_PASSWORD,
+	)
+
+	err := dialer.DialAndSend(mailer)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+}

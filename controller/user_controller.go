@@ -204,6 +204,7 @@ func InsertUser(w http.ResponseWriter, r *http.Request) {
 
 	if errQuery == nil {
 		gomail.SendMail(user.Email, user.Name)
+		go gomail.SendPromoMail(user.Email, user.Name) //go routine(mengirim 2 email asynchronous)
 		response.Status = 200
 		response.Message = "Success"
 		user.ID = int(id)
