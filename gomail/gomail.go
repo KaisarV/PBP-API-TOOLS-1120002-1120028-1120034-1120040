@@ -65,15 +65,12 @@ func SendMorningMail() {
 		Name: "renald",
 	}
 
-	SetRedis(rdb, "syhi", "Selamat Pagi, URAAAAA!!!!", 0)
-	syhi := GetRedis(rdb, "syhi")
-
 	result, _ := ParseTemplate("gomail/email_template_hai.html", templateData)
 	mailer := gomail.NewMessage()
 	mailer.SetHeader("From", CONFIG_SENDER_NAME)
 	mailer.SetHeader("To", "nyxargentum16@gmail.com")
 	mailer.SetAddressHeader("Cc", "nyxargentum16@gmail.com", "Pemberitahuan Penting dari IF-20")
-	mailer.SetHeader("Subject", syhi)
+	mailer.SetHeader("Subject", " ")
 	mailer.SetBody("text/html", result)
 }
 

@@ -15,7 +15,6 @@ require (
 
 require (
 	github.com/claudiu/gocron v0.0.0-20151103142354-980c96bf412b
-	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/rs/cors v1.8.2
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
