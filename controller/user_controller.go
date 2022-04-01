@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 )
 
@@ -309,11 +308,13 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	var response model.ErrorResponse
 
-	name := r.URL.Query()["name"]
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
 
-	row := db.QueryRow("SELECT * FROM users WHERE Name = ?", name[0])
+	row := db.QueryRow("SELECT * FROM users WHERE Email = ? AND password = ?", email, password)
 	var user model.User
-	if err := row.Scan(&user.ID, &user.Name, &user.Age, &user.Address, &user.Email, &user.Password, &user.UserType); err != nil {
+	err := row.Scan(&user.ID, &user.Name, &user.Age, &user.Address, &user.Email, &user.Password, &user.UserType)
+	if err != nil {
 		fmt.Println(err)
 		response.Status = 200
 		response.Message = "Login Failed"
@@ -322,7 +323,7 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 
 	} else {
-		generateToken(w, user.ID, user.Name, user.UserType)
+		generateToken(w, user.ID, user.Email, user.UserType)
 
 		response.Status = 200
 		response.Message = "Login Success"
@@ -330,13 +331,13 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 
-		//set redis
-		rdb := redis.NewClient(&redis.Options{
-			Addr:     "localhost:6379",
-			Password: "", // no password set
-			DB:       0,  // use default DB
-		})
-		SetRedis(rdb, "emailUser", user.Email, 0)
+		// //set redis
+		// rdb := redis.NewClient(&redis.Options{
+		// 	Addr:     "localhost:6379",
+		// 	Password: "", // no password set
+		// 	DB:       0,  // use default DB
+		// })
+		// SetRedis(rdb, "emailUser", user.Email, 0)
 	}
 }
 

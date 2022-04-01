@@ -22,7 +22,7 @@ func main() {
 	})
 
 	router := mux.NewRouter()
-	router.HandleFunc("/login", controller.CheckUserLogin).Methods("GET")
+	router.HandleFunc("/login", controller.CheckUserLogin).Methods("POST")
 	router.HandleFunc("/logout", controller.Logout).Methods("GET")
 
 	router.HandleFunc("/users", controller.InsertUser).Methods("POST")
@@ -43,10 +43,10 @@ func main() {
 
 	controller.SetRedis(rdb, "epgi", "Selamat Pagi Dunia!!", 0) // set key and its value
 	epgi := controller.GetRedis(rdb, "epgi")                    // get value with specific key
-	emailUser := controller.GetRedis(rdb, "emailUser")
+	// emailUser := controller.GetRedis(rdb, "emailUser")
 
 	gocron.Start()
-	gocron.Every(1).Day().At("08:00").Do(gomail.SendMorningMail, emailUser, epgi)
+	gocron.Every(10).Seconds().Do(gomail.SendMorningMail /*emailUser,*/, epgi)
 
 	//flush keys
 	//rdb.FlushDB(ctx)
