@@ -2,6 +2,7 @@ package main
 
 import (
 	controller "GolangTools/controller"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -41,11 +42,12 @@ func main() {
 	router.HandleFunc("/transactions/{id}", controller.UpdateTransaction).Methods("PUT")
 	router.HandleFunc("/transactions/{id}", controller.DeleteTransaction).Methods("DELETE")
 
-	controller.SetRedis(rdb, "epgi", "Selamat Pagi Dunia!!", 0) // set key and its value
-	epgi := controller.GetRedis(rdb, "epgi")                    // get value with specific key
-	kuser := controller.GetRedis(rdb, "kuser")
+	// controller.SetRedis(rdb, "epgi", "Selamat Pagi Dunia!!", 0) // set key and its value
+	epgi := controller.GetRedis(rdb, "epgi") // get value with specific key
+	// kuser := controller.GetRedis(rdb, "kuser")
+	fmt.Print(epgi)
 
-	controller.Gocron(epgi, kuser)
+	// controller.Gocron(epgi, kuser)
 	// gocron.Start()
 	// gocron.Every(10).Seconds().Do(gomail.SendMorningMail, epgi)
 

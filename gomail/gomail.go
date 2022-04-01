@@ -60,15 +60,15 @@ func ParseTemplate(templateFileName string, data interface{}) (string, error) {
 	return buf.String(), nil
 }
 
-func SendMorningMail(epgi string) {
+func SendMorningMail(epgi string, kuser string) {
 	templateData := BodylinkEmail{
-		Name: "user",
+		Name: kuser,
 	}
 	result, _ := ParseTemplate("gomail/email_template_hai.html", templateData)
 	mailer := gomail.NewMessage()
 	mailer.SetHeader("From", CONFIG_SENDER_NAME)
-	mailer.SetHeader("To" /*emailUser*/, "xenon.avius@gmail.com")
-	mailer.SetAddressHeader("Cc" /*emailUser*/, "xenon.avius@gmail.com", "Pemberitahuan Penting dari IF-20")
+	mailer.SetHeader("To", kuser /*"xenon.avius@gmail.com"*/)
+	mailer.SetAddressHeader("Cc" /*emailUser*/, "if-20034@students.ithb.ac.id", "Pemberitahuan Penting dari IF-20")
 	mailer.SetHeader("Subject", epgi)
 	mailer.SetBody("text/html", result)
 }
