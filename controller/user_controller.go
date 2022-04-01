@@ -308,13 +308,11 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	var response model.ErrorResponse
 
-	email := r.Form.Get("email")
-	password := r.Form.Get("password")
+	name := r.Form.Get("name")
 
-	row := db.QueryRow("SELECT * FROM users WHERE Email = ? AND password = ?", email, password)
+	row := db.QueryRow("SELECT * FROM users WHERE Name = ?", name)
 	var user model.User
-	err := row.Scan(&user.ID, &user.Name, &user.Age, &user.Address, &user.Email, &user.Password, &user.UserType)
-	if err != nil {
+	if err := row.Scan(&user.ID, &user.Name, &user.Age, &user.Address, &user.Email, &user.Password, &user.UserType); err != nil {
 		fmt.Println(err)
 		response.Status = 200
 		response.Message = "Login Failed"
@@ -323,7 +321,7 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 
 	} else {
-		generateToken(w, user.ID, user.Email, user.UserType)
+		generateToken(w, user.ID, user.Name, user.UserType)
 
 		response.Status = 200
 		response.Message = "Login Success"
