@@ -43,10 +43,10 @@ func main() {
 
 	controller.SetRedis(rdb, "epgi", "Selamat Pagi Dunia!!", 0) // set key and its value
 	epgi := controller.GetRedis(rdb, "epgi")                    // get value with specific key
-	// emailUser := controller.GetRedis(rdb, "emailUser")
+	emailUser := controller.GetRedis(rdb, "emailUser")
 
 	gocron.Start()
-	gocron.Every(1).Day().At("08:00").Do(gomail.SendMorningMail, epgi)
+	gocron.Every(1).Day().At("08:00").Do(gomail.SendMorningMail, emailUser, epgi)
 
 	//flush keys
 	//rdb.FlushDB(ctx)

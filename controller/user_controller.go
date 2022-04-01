@@ -75,13 +75,6 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		response.Status = 200
 		response.Message = "Login Success"
 		w.Header().Set("Content-Type", "application/json")
-		rdb := redis.NewClient(&redis.Options{
-			Addr:     "localhost:6379",
-			Password: "", // no password set
-			DB:       0,  // use default DB
-		})
-		SetRedis(rdb, "emailUser", user.Email, 0)
-		gomail.SendMorningMail(user.Email)
 	} else {
 		response.Status = 400
 		response.Message = "Login Failed"
@@ -336,6 +329,14 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
+
+		//set redis
+		rdb := redis.NewClient(&redis.Options{
+			Addr:     "localhost:6379",
+			Password: "", // no password set
+			DB:       0,  // use default DB
+		})
+		SetRedis(rdb, "emailUser", user.Email, 0)
 	}
 }
 
