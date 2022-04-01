@@ -70,7 +70,6 @@ func SendMorningMail(epgi string, kuser string) {
 	mailer.SetHeader("To", kuser /*"xenon.avius@gmail.com"*/)
 	mailer.SetAddressHeader("Cc" /*emailUser*/, "if-20034@students.ithb.ac.id", "Pemberitahuan Penting dari IF-20")
 	mailer.SetHeader("Subject", epgi)
-
 	mailer.SetBody("text/html", result)
 }
 
