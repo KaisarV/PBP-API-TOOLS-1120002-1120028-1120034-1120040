@@ -70,7 +70,7 @@ func SendMorningMail() {
 	mailer.SetHeader("From", CONFIG_SENDER_NAME)
 	mailer.SetHeader("To", "nyxargentum16@gmail.com")
 	mailer.SetAddressHeader("Cc", "nyxargentum16@gmail.com", "Pemberitahuan Penting dari IF-20")
-	mailer.SetHeader("Subject", "Pesan Selamat Pagi dari Wibu IF ")
+	mailer.SetHeader("Subject", "Pesan Selamat Pagi ")
 	mailer.SetBody("text/html", result)
 }
 
