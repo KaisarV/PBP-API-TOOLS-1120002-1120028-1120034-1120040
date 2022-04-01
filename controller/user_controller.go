@@ -306,27 +306,54 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 	db := connect()
 	defer db.Close()
 	var response model.ErrorResponse
+	err := r.ParseForm()
 
-	name := r.URL.Query()["name"]
+	if err != nil {
+		response.Status = 400
+		response.Message = "Error Parsing Data"
+		w.WriteHeader(400)
+		log.Println(err.Error())
+		return
+	}
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
 
-	row := db.QueryRow("SELECT * FROM users WHERE Name = ?", name[0])
+	rows, _ := db.Query("SELECT * FROM users WHERE Email = ? AND password = ?", email, password)
+
+	fmt.Println(email)
 	var user model.User
-	if err := row.Scan(&user.ID, &user.Name, &user.Age, &user.Address, &user.Email, &user.Password, &user.UserType); err != nil {
-		fmt.Println(err)
+	var users []model.User
+
+	for rows.Next() {
+		if err := rows.Scan(&user.ID, &user.Name, &user.Age, &user.Address, &user.Email, &user.Password, &user.UserType); err != nil {
+			log.Println(err.Error())
+		} else {
+			users = append(users, user)
+		}
+	}
+
+	if len(users) == 0 {
 		response.Status = 200
 		response.Message = "Login Failed"
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
-
 	} else {
-		generateToken(w, user.ID, user.Name, user.UserType)
+		generateToken(w, user.ID, user.Email, user.UserType)
 
 		response.Status = 200
 		response.Message = "Login Success"
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
+
+		// //set redis
+		// rdb := redis.NewClient(&redis.Options{
+		//     Addr:     "localhost:6379",
+		//     Password: "", // no password set
+		//     DB:       0,  // use default DB
+		// })
+		// SetRedis(rdb, "emailUser", user.Email, 0)
 	}
 }
 

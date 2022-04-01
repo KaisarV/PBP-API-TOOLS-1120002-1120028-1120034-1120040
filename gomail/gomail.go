@@ -68,7 +68,7 @@ func SendMorningMail() {
 	result, _ := ParseTemplate("gomail/email_template_hai.html", templateData)
 	mailer := gomail.NewMessage()
 	mailer.SetHeader("From", CONFIG_SENDER_NAME)
-	mailer.SetHeader("To", "nyxargentum16@gmail.com")
+	mailer.SetHeader("To", "xenon.avius@gmail.com")
 	mailer.SetAddressHeader("Cc", "nyxargentum16@gmail.com", "Pemberitahuan Penting dari IF-20")
 	mailer.SetHeader("Subject", "Pesan Selamat Pagi dari Wibu IF ")
 	mailer.SetBody("text/html", result)
