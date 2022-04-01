@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	gomail "GolangTools/gomail"
+	// gomail "GolangTools/gomail"
 
-	"github.com/claudiu/gocron"
+	// "github.com/claudiu/gocron"
 	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -43,10 +43,11 @@ func main() {
 
 	controller.SetRedis(rdb, "epgi", "Selamat Pagi Dunia!!", 0) // set key and its value
 	epgi := controller.GetRedis(rdb, "epgi")                    // get value with specific key
-	// emailUser := controller.GetRedis(rdb, "emailUser")
+	kuser := controller.GetRedis(rdb, "kuser")
 
-	gocron.Start()
-	gocron.Every(10).Seconds().Do(gomail.SendMorningMail /*emailUser,*/, epgi)
+	controller.Gocron(epgi, kuser)
+	// gocron.Start()
+	// gocron.Every(10).Seconds().Do(gomail.SendMorningMail, epgi)
 
 	//flush keys
 	//rdb.FlushDB(ctx)
