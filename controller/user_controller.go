@@ -9,13 +9,14 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 )
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
 	db := connect()
-
 	defer db.Close()
+
 	var response model.ErrorResponse
 
 	err := r.ParseForm()
@@ -70,6 +71,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if users[0].Password == password {
+		generateToken(w, user.ID, user.Email, user.UserType)
 		response.Status = 200
 		response.Message = "Login Success"
 		w.Header().Set("Content-Type", "application/json")
@@ -150,7 +152,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId := vars["id"]
 	query, errQuery := db.Exec(`DELETE FROM users WHERE id = ?;`, userId)
-	RowsAffected, err := query.RowsAffected()
+	RowsAffected, _ := query.RowsAffected()
 
 	if RowsAffected == 0 {
 		response.Status = 400
@@ -200,7 +202,7 @@ func InsertUser(w http.ResponseWriter, r *http.Request) {
 	user.Password = r.Form.Get("password")
 
 	res, errQuery := db.Exec("INSERT INTO users (name, age, address, email, password) VALUES (?,?,?,?,?)", user.Name, user.Age, user.Address, user.Email, user.Password)
-	id, err := res.LastInsertId()
+	id, _ := res.LastInsertId()
 
 	if errQuery == nil {
 		gomail.SendMail(user.Email, user.Name)
@@ -347,13 +349,18 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 
-		// //set redis
-		// rdb := redis.NewClient(&redis.Options{
-		//     Addr:     "localhost:6379",
-		//     Password: "", // no password set
-		//     DB:       0,  // use default DB
-		// })
-		// SetRedis(rdb, "emailUser", user.Email, 0)
+		//set redis
+		rdb := redis.NewClient(&redis.Options{
+			Addr:     "localhost:6379",
+			Password: "", // no password set
+			DB:       0,  // use default DB
+		})
+		SetRedis(rdb, "kuser", user.Email, 0)
+		SetRedis(rdb, "epgi", "Selamat Pagi Dunia!!", 0) // set key and its value
+		epgi := GetRedis(rdb, "epgi")                    // get value with specific key
+		kuser := GetRedis(rdb, "kuser")
+		Gocron(epgi, kuser)
+
 	}
 }
 
