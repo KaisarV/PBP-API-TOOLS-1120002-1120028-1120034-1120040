@@ -349,6 +349,7 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 
+<<<<<<< .merge_file_a06968
 		//set redis
 		rdb := redis.NewClient(&redis.Options{
 			Addr:     "localhost:6379",
@@ -360,6 +361,15 @@ func CheckUserLogin(w http.ResponseWriter, r *http.Request) {
 		epgi := GetRedis(rdb, "epgi")                    // get value with specific key
 		kuser := GetRedis(rdb, "kuser")
 		Gocron(epgi, kuser)
+=======
+		// //set redis
+		// rdb := redis.NewClient(&redis.Options{
+		//     Addr:     "localhost:6379",
+		//     Password: "", // no password set
+		//     DB:       0,  // use default DB
+		// })
+		// SetRedis(rdb, "emailUser", user.Email, 0)
+>>>>>>> .merge_file_a10536
 	}
 }
 
